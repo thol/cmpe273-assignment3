@@ -69,7 +69,7 @@ class UDPServer():
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print('Missing server index as argument. Usage: python3 cache_client.py [0-{}]'.format(len(NODES)-1))
+        print('Missing server index as argument. Usage: python3 cache_server.py [0-{}]'.format(len(NODES)-1))
         sys.exit(2)
 
     node_index = int(sys.argv[1])
