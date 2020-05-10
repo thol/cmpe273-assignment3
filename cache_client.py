@@ -5,11 +5,12 @@ from sample_data import USERS
 from server_config import NODES
 from pickle_hash import serialize_GET, serialize_PUT, serialize_DELETE, lru_cache
 from node_ring import NodeRing
-# from lru_cache import lru_cache_obj, lru_cache
+from bloom_filter import BloomFilter 
 
 BUFFER_SIZE = 1024
-# cache_obj = lru_cache_obj(5)
-
+NUM_KEYS = 20 
+FALSE_POSITIVE_PROBABILITY = 0.05
+bloomfilter = BloomFilter(NUM_KEYS, FALSE_POSITIVE_PROBABILITY) 
 
 class UDPClient():
     def __init__(self, host, port):
@@ -34,6 +35,7 @@ def process(udp_clients):
     # PUT all users.
     for u in USERS:
         data_bytes, key = serialize_PUT(u)
+        bloomfilter.add(key)
         response = client_ring.get_node(key).send(data_bytes)
         print(response)
         hash_codes.add(str(response.decode()))
@@ -45,14 +47,20 @@ def process(udp_clients):
     for hc in hash_codes:
         print(hc)
         data_bytes, key = serialize_GET(hc)
-        response = client_ring.get_node(key).send(data_bytes)
+        if bloomfilter.is_member(key):
+            response = client_ring.get_node(key).send(data_bytes)
+        else:
+            return None
         print(response)
 
     # DELETE all users.
     for hc in hash_codes:
         print(hc)
         data_bytes, key = serialize_DELETE(hc)
-        response = client_ring.get_node(key).send(data_bytes)
+        if bloomfilter.is_member(key):
+            response = client_ring.get_node(key).send(data_bytes)
+        else:
+            return None
         print(response)
 
 if __name__ == "__main__":
