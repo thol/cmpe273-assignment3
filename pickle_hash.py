@@ -1,33 +1,7 @@
 import pickle
 import hashlib
-from lru_cache import lru_cache_obj
 import functools
-
-
-def lru_cache(cache_size):
-    def lru_cache_decorator(func):
-        @functools.wraps(func)
-        def wrapper_lru_cache(*args, **kwargs):
-            cache_obj = lru_cache_obj(cache_size)
-            # print("********"+func.__name__+"********")
-            if func.__name__ == "serialize_PUT":
-                key, value = func(*args, **kwargs)
-                cache_obj.set(key, value)
-                return key, value
-            if func.__name__ == "serialize_GET":
-                key = args
-                value = cache_obj.get(*args)
-                if (value == -1):
-                    key, value = func(*args, **kwargs)
-                return key, value
-            if func.__name__ == "serialize_DELETE":
-                key = args
-                value = cache_obj.delete(*args)
-                if (value == -1):
-                    key, value = func(*args, **kwargs)
-                return key, value
-        return wrapper_lru_cache
-    return lru_cache_decorator
+from lru_cache import lru_cache
 
 def serialize(object):
     return pickle.dumps(object)
