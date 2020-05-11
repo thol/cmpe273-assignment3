@@ -35,4 +35,5 @@ Case 1 | 1.0E-6 (1 in million) | 28755176 (3.43MiB) | 20
 Case 2 | 0.01 (1 in 100) | 9585059 (1.14MiB) | 7
 
 Derived using [Bloom filter calculator](https://hur.st/bloomfilter/?n=1000000&p=1E-6&m=&k=)
-![](images/bloom_filter_values.png)
+
+![](images/bloomfilter_calculation.png)
